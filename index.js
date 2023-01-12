@@ -53,6 +53,7 @@ async function getNewQuestion(groupId = 1) {
 		con.query("SELECT * FROM questions", (err, results) => {
 			if (err) return console.error(err)
 			if (!results[0] || results[0].length < 1) return console.log("No results")
+			results[0].answers = JSON.parse(results[0].answers)
 			resolve(results[0])
 		})
 	})
