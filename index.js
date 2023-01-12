@@ -26,7 +26,7 @@ con.connect((err) => {
 	console.log("Connected!")
 	con.query("SELECT * FROM questions", (err, results) => {
 		if (err) return console.error(err)
-		if (!results || results[0].length < 1) return console.log("No results")
+		if (!results[0] || results[0].length < 1) return console.log("No results")
 		console.log(JSON.parse(results[0].answers)[results[0].solution])
 	})
 })
