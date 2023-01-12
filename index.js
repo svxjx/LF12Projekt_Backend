@@ -16,8 +16,18 @@ const con = mysql.createConnection({
 	user: process.env.USER,
 	password: process.env.PASSWORD,
 	charset: "utf8mb4",
-	port: 8080,
+	port: 3306,
 	multipleStatements: true,
+})
+
+con.connect((err) => {
+	if (err) throw err
+	console.log("Connected!")
+	con.query("SELECT * FROM questions", (err, results) => {
+		if (err) return console.error(err)
+		if (!results || results[0].length < 1) return console.log("No results")
+		console.log(JSON.parse(results[0].answers)[results[0].solution])
+	})
 })
 
 app.listen("8080", () => {
@@ -29,7 +39,13 @@ app.get("/", (req, res) => {
 })
 
 app.get("/api/new_question", (req, res) => {
-	res.json({ fragen: ["1", "2"], antwort: 0 })
+	res.json({
+		id: 1,
+		groupId: 1,
+		question: "wer ist toll?",
+		answers: '["te","da","tp","dad"]',
+		solution: 2,
+	})
 })
 
 app.post("/api/answer", (req, res) => {
