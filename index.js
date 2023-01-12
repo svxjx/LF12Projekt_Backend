@@ -23,12 +23,7 @@ const con = mysql.createConnection({
 
 con.connect((err) => {
 	if (err) throw err
-	console.log("Connected!")
-	con.query("SELECT * FROM questions", (err, results) => {
-		if (err) return console.error(err)
-		if (!results[0] || results[0].length < 1) return console.log("No results")
-		console.log(JSON.parse(results[0].answers)[results[0].solution])
-	})
+	console.log(colors.green.bold("Connected!"))
 })
 
 app.listen("8080", () => {
@@ -39,18 +34,26 @@ app.get("/", (req, res) => {
 	res.status(200).send("Angular")
 })
 
-app.get("/api/new_question", (req, res) => {
-	res.json({
-		id: 1,
-		groupId: 1,
-		question: "wer ist toll?",
-		answers: '["te","da","tp","dad"]',
-		solution: 2,
-	})
+app.get("/api/:session/new_question", async (req, res) => {
+	res.send(await getNewQuestion())
 })
 
-app.post("/api/answer", (req, res) => {
+app.post("/api/:session/answer", (req, res) => {
 	console.log(req.body)
 	console.log(`user answered with : ${req.body}`)
 	res.end()
 })
+
+/**
+ *
+ * @param {Number} groupId
+ */
+async function getNewQuestion(groupId = 1) {
+	return new Promise((resolve) => {
+		con.query("SELECT * FROM questions", (err, results) => {
+			if (err) return console.error(err)
+			if (!results[0] || results[0].length < 1) return console.log("No results")
+			resolve(results[0])
+		})
+	})
+}
