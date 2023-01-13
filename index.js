@@ -39,8 +39,7 @@ app.get("/api/:session/new_question", async (req, res) => {
 })
 
 app.post("/api/:session/answer", (req, res) => {
-	console.log(req.body)
-	console.log(`user answered with : ${req.body}`)
+	console.log(req.params.session, req.body.answer)
 	res.end()
 })
 
@@ -50,7 +49,7 @@ app.post("/api/:session/answer", (req, res) => {
  */
 async function getNewQuestion(groupId = 1) {
 	return new Promise((resolve) => {
-		con.query("SELECT * FROM questions", (err, results) => {
+		con.query("SELECT * FROM questions ORDER BY RAND()", (err, results) => {
 			if (err) return console.error(err)
 			if (!results[0] || results[0].length < 1) return console.log("No results")
 			results[0].answers = JSON.parse(results[0].answers)
