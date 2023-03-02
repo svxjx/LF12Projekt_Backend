@@ -35,7 +35,8 @@ app.get("/", (req, res) => {
 })
 
 app.get("/api/:session/new_question", async (req, res) => {
-	res.send(await getNewQuestion())
+	const groupId = req.body.groupId ? req.body.groupId : 1
+	res.send(await getNewQuestion(groupId))
 })
 
 app.post("/api/:session/answer", (req, res) => {
@@ -57,7 +58,7 @@ app.get("/api/topics", (req, res) => {
  */
 async function getNewQuestion(groupId = 1) {
 	return new Promise((resolve) => {
-		con.query("SELECT * FROM questions ORDER BY RAND()", (err, results) => {
+		con.query(`SELECT * FROM questions ORDER BY RAND() WHERE topic_id = ${con.escape(groupId)}`, (err, results) => {
 			if (err) return console.error(err)
 			if (!results[0] || results[0].length < 1) return console.log("No results")
 			results[0].answers = JSON.parse(results[0].answers)
